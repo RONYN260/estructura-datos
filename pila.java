@@ -1,7 +1,4 @@
- import java.util.Stack;        // Si usaras Stack de Java
-import java.util.ArrayList;    // Si usaras ArrayList
-import java.util.Scanner;      // Si usaras Scanner para leer del teclado
- public class Pila {
+public class Pila {
     
     // El nodo es como una caja que guarda un número y apunta al siguiente
     class Nodo {
