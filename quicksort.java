@@ -25,7 +25,7 @@ public class quicksort {
                 // Intercambiamos arr[i] y arr[j]
                 swap(arr, i, j);
             }
-        }
+        } 
         
         // Intercambiamos arr[i+1] y arr[high] (el pivote)
         swap(arr, i + 1, high);
