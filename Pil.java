@@ -1,4 +1,4 @@
-public class Pila {
+public class Pil a {
     
     // El nodo es como una caja que guarda un número y apunta al siguiente
     class Nodo {
@@ -16,7 +16,7 @@ public class Pila {
     // Constructor - crea una pila vacía
     public Pila() {
         tope = null;
-    }
+    }   
     
     // PUSH - Poner un elemento arriba
     public void push(int dato) {
@@ -97,4 +97,4 @@ public class Pila {
         pila.pop();
         System.out.println("¿Está vacía? " + pila.estaVacia());
     }
-}
+}//   dame esto en python
