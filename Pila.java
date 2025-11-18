@@ -1,4 +1,4 @@
-public class Pil a {
+public class Pila {
     
     // El nodo es como una caja que guarda un número y apunta al siguiente
     class Nodo {

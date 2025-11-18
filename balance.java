@@ -1,9 +1,72 @@
 
-import java.util.Stack;
 import java.util.Scanner;
 
 public class balance {
-
+    
+    // Clase Nodo para nuestra pila
+    static class Nodo {
+        char dato;           // El carácter que guardamos
+        Nodo siguiente;      // Referencia al siguiente nodo
+        
+        // Constructor
+        public Nodo(char dato) {
+            this.dato = dato;
+            this.siguiente = null;
+        }
+    }
+    
+    // Clase Pila implementada con nodos
+    static class Pila {
+        private Nodo tope;   // El nodo superior de la pila
+        
+        // Constructor
+        public Pila() {
+            this.tope = null;
+        }
+        
+        // PUSH: Agregar un elemento al tope de la pila
+        public void push(char dato) {
+            Nodo nuevoNodo = new Nodo(dato);
+            nuevoNodo.siguiente = tope;  // El nuevo nodo apunta al anterior tope
+            tope = nuevoNodo;            // El nuevo nodo se convierte en el tope
+            System.out.println("   ✓ PUSH: '" + dato + "' agregado a la pila");
+        }
+        
+        // POP: Sacar el elemento del tope de la pila
+        public char pop() {
+            if (estaVacia()) {
+                return '\0';  // Retorna carácter nulo si está vacía
+            }
+            char dato = tope.dato;
+            tope = tope.siguiente;  // El tope ahora es el siguiente nodo
+            System.out.println("   ✓ POP: '" + dato + "' sacado de la pila");
+            return dato;
+        }
+        
+        // Verificar si la pila está vacía
+        public boolean estaVacia() {
+            return tope == null;
+        }
+        
+        // Mostrar el contenido de la pila (para visualización)
+        public void mostrar() {
+            if (estaVacia()) {
+                System.out.println("   Pila: [vacía]");
+                return;
+            }
+            
+            System.out.print("   Pila (tope→base): [");
+            Nodo actual = tope;
+            while (actual != null) {
+                System.out.print(actual.dato);
+                if (actual.siguiente != null) {
+                    System.out.print(", ");
+                }
+                actual = actual.siguiente;
+            }
+            System.out.println("]");
+        }
+    }
     
     // Verifica si un carácter es un signo de apertura
     public static boolean esApertura(char c) {
@@ -15,8 +78,8 @@ public class balance {
         return c == ')' || c == ']' || c == '}';
     }
     
-    // Verifica si los signos coinciden
-    public static boolean coinciden(char apertura, char cierre) {
+    // Verifica si los signos hacen pareja
+    public static boolean hacenPareja(char apertura, char cierre) {
         return (apertura == '(' && cierre == ')') ||
                (apertura == '[' && cierre == ']') ||
                (apertura == '{' && cierre == '}');
@@ -24,119 +87,112 @@ public class balance {
     
     // Función principal que verifica el balance
     public static boolean verificarBalance(String expresion) {
-        Stack<Character> pila = new Stack<>();
+        Pila pila = new Pila();
         
-        System.out.println("\n=== VERIFICANDO: " + expresion + " ===\n");
-        System.out.println("Inicio - Pila vacía");
+        System.out.println("\n╔══════════════════════════════════════════╗");
+        System.out.println("║  VERIFICANDO: " + expresion);
+        System.out.println("╚══════════════════════════════════════════╝\n");
         
+        // Recorrer cada carácter de la expresión
         for (int i = 0; i < expresion.length(); i++) {
             char c = expresion.charAt(i);
             
-            // Si es un signo de apertura
+            System.out.println("Paso " + (i+1) + ": Leyendo '" + c + "'");
+            
+            // Si es un signo de apertura: PUSH a la pila
             if (esApertura(c)) {
+                System.out.println("   → Es un signo de APERTURA");
                 pila.push(c);
-                System.out.println("Posición " + i + ": '" + c + "' → PUSH a la pila");
-                System.out.println("   Pila: " + pila);
+                pila.mostrar();
             }
             // Si es un signo de cierre
             else if (esCierre(c)) {
-                System.out.print("Posición " + i + ": '" + c + "' → ");
+                System.out.println("   → Es un signo de CIERRE");
                 
-                // Error: pila vacía
-                if (pila.isEmpty()) {
-                    System.out.println("ERROR - Cierre sin apertura");
+                // ¿La pila está vacía? ¡ERROR!
+                if (pila.estaVacia()) {
+                    System.out.println("   ✗ ERROR: No hay apertura para este cierre");
                     System.out.println("   La pila está vacía!");
                     return false;
                 }
                 
-                char tope = pila.pop();
+                // Sacar el tope de la pila
+                char apertura = pila.pop();
                 
-                // Error: no coinciden
-                if (!coinciden(tope, c)) {
-                    System.out.println("ERROR - No coinciden");
-                    System.out.println("   '" + c + "' no coincide con '" + tope + "'");
+                // ¿Hacen pareja?
+                if (!hacenPareja(apertura, c)) {
+                    System.out.println("   ✗ ERROR: '" + apertura + "' NO hace pareja con '" + c + "'");
                     return false;
                 }
                 
-                // Coinciden correctamente
-                System.out.println("POP (coincide con '" + tope + "')");
-                System.out.println("   Pila: " + (pila.isEmpty() ? "vacía" : pila.toString()));
+                System.out.println("   ✓ '" + apertura + "' y '" + c + "' hacen pareja correcta!");
+                pila.mostrar();
             }
+            // Si no es ni apertura ni cierre (letras, números, etc.)
+            else {
+                System.out.println("   → No es un signo (se ignora)");
+            }
+            
+            System.out.println();
         }
         
-        // Verificar si quedaron elementos sin cerrar
-        System.out.println("\nFin del recorrido");
-        if (!pila.isEmpty()) {
-            System.out.println("ERROR - Quedan " + pila.size() + " apertura(s) sin cerrar: " + pila);
+        // Al final, ¿quedó algo en la pila?
+        System.out.println("═══════════════════════════════════════════");
+        System.out.println("Fin del recorrido. Verificando pila final...");
+        pila.mostrar();
+        
+        if (!pila.estaVacia()) {
+            System.out.println("✗ ERROR: Quedan aperturas sin cerrar");
             return false;
         }
         
-        System.out.println("Pila vacía - ¡BALANCEADO! ✓");
+        System.out.println("✓ ¡ÉXITO! La expresión está BALANCEADA");
         return true;
-    }
-    
-    // Método alternativo sin mostrar pasos (más simple)
-    public static boolean verificarBalanceSimple(String expresion) {
-        Stack<Character> pila = new Stack<>();
-        
-        for (char c : expresion.toCharArray()) {
-            if (esApertura(c)) {
-                pila.push(c);
-            } else if (esCierre(c)) {
-                if (pila.isEmpty() || !coinciden(pila.pop(), c)) {
-                    return false;
-                }
-            }
-        }
-        
-        return pila.isEmpty();
     }
     
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        // Casos de prueba
+        System.out.println("╔════════════════════════════════════════════╗");
+        System.out.println("║                                            ║");
+        System.out.println("║   VERIFICADOR DE BALANCE DE SIGNOS         ║");
+        System.out.println("║   (Implementación con Nodos y Pila)        ║");
+        System.out.println("║                                            ║");
+        System.out.println("╚════════════════════════════════════════════╝");
+        
+        // Ejemplos de prueba
         String[] ejemplos = {
-            "{[()]}",      // Balanceado
-            "((a+b))",     // Balanceado
-            "{a + [b * (c - d)]}", // Balanceado
-            "{[(])}",      // No balanceado
-            "([)]",        // No balanceado
-            "((a+b)",      // No balanceado
-            "{[}]"         // No balanceado
+            "{[()]}",       // ✓ Balanceado
+            "((a+b))",      // ✓ Balanceado
+            "{[(])}",       // ✗ No balanceado (cruzados)
+            "((a+b",        // ✗ No balanceado (sin cerrar)
+            "))",           // ✗ No balanceado (solo cierres)
         };
         
-        System.out.println("╔════════════════════════════════════════╗");
-        System.out.println("║   VERIFICADOR DE BALANCE DE SIGNOS    ║");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n>>> EJEMPLOS AUTOMÁTICOS <<<\n");
         
-        // Probar ejemplos automáticos
-        System.out.println("\n>>> PROBANDO EJEMPLOS AUTOMÁTICOS <<<");
-        for (String expresion : ejemplos) {
-            boolean balanceado = verificarBalance(expresion);
-            System.out.println("\nResultado: " + (balanceado ? "✓ BALANCEADO" : "✗ NO BALANCEADO"));
-            System.out.println("─────────────────────────────────────────\n");
+        for (String ejemplo : ejemplos) {
+            boolean resultado = verificarBalance(ejemplo);
+            System.out.println("\n★ RESULTADO: " + (resultado ? "✓ BALANCEADO" : "✗ NO BALANCEADO"));
+            System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         }
         
         // Modo interactivo
         System.out.println("\n>>> MODO INTERACTIVO <<<");
-        System.out.println("Ingresa expresiones para verificar (escribe 'salir' para terminar)");
+        System.out.println("Escribe tu propia expresión para verificar");
+        System.out.println("(o escribe 'salir' para terminar)\n");
         
-        while (true) {
-            System.out.print("\nExpresión: ");
+        boolean continuar = true;
+        while (continuar) {
+            System.out.print("Expresión: ");
             String expresion = scanner.nextLine().trim();
             
             if (expresion.equalsIgnoreCase("salir")) {
-                System.out.println("¡Hasta luego!");
-                break;
+                System.out.println("\n¡Hasta luego! 👋");
+                continuar = false;
+            } else if (!expresion.isEmpty()) {
+                verificarBalance(expresion);
             }
-            
-            if (expresion.isEmpty()) {
-                continue;
-            }
-            
-            boolean balanceado = verificarBalance(expresion);
-            System.out.println("\n" + (balanceado ? "✓ BALANCEADO" : "✗ NO BALANCEADO"));
         }
         
         scanner.close();
