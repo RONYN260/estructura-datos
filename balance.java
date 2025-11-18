@@ -153,13 +153,10 @@ public class balance {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("╔════════════════════════════════════════════╗");
-        System.out.println("║                                            ║");
+                                           
         System.out.println("║   VERIFICADOR DE BALANCE DE SIGNOS         ║");
         System.out.println("║   (Implementación con Nodos y Pila)        ║");
-        System.out.println("║                                            ║");
-        System.out.println("╚════════════════════════════════════════════╝");
-        
+       
         // Ejemplos de prueba
         String[] ejemplos = {
             "{[()]}",       // ✓ Balanceado
